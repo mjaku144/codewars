@@ -16,7 +16,12 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
+include_directories(
+	solution/
+)
+
 add_executable( test_
+	solution/solution.cpp
 	ut/test.cpp
 )
 
