@@ -1,0 +1,16 @@
+https://www.codewars.com/kata/5e335f9712b02a001a874eef
+
+In this kata, you are given a prime number p. Your goal is to generate an array of p² + p + 1 arrays, each consisting of p + 1 distinct numbers between 1 and p² + p + 1 included. This set of arrays is such that for any pair of arrays, they both have exactly one number in common.
+
+For example, a valid output for p = 2 is:
+
+[
+  [7,2,4],
+  [1,7,3],
+  [4,3,5],
+  [6,4,1],
+  [1,2,5],
+  [2,6,3],
+  [6,5,7]
+]
+The order of the output does not matter. The input range tested for this kata goes up to p = 43.
