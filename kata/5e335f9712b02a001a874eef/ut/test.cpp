@@ -67,3 +67,22 @@ TEST(increment, CanInterateThroughAllPossibleValues)
 	}
 	EXPECT_FALSE(increment(data, maxValue));
 }
+
+void printVector(const std::vector<int>& data)
+{
+	for(auto & value : data)
+	{
+		std::cout << value << '\t';
+	}
+	std::cout << '\n';
+}
+
+TEST(test, test)
+{
+	std::vector<int> data = {1,2,3};
+	printVector(data);
+	while(increment(data, 7) == true)
+	{
+		printVector(data);
+	}
+}
