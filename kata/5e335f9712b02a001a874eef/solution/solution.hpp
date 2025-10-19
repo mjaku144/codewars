@@ -3,8 +3,11 @@
 
 #include <vector>
 
-bool isEqual(const std::vector<int> & lhs, const std::vector<int> & rhs);
+void initPairMatrix(std::vector<std::vector<char>> & pairMatrix, int maxValue);
 
-bool increment(std::vector<int> & data, const int maxValue);
+std::pair<int, int> findNextFalse(std::vector<std::vector<char>> & pairMatrix, int testSize);
+
+//definition from codewars
+std::vector<std::vector<int>> arrays(int p);
 
 #endif //SOLUTION_HPP

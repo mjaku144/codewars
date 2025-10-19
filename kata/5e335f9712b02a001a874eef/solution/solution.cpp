@@ -1,43 +1,70 @@
 #include <vector>
-#include <algorithm>
-#include <numeric>
+#include <utility>
+#include <cassert>
 
 #include "solution.hpp"
 
-bool isEqual(const std::vector<int> & lhs, const std::vector<int> & rhs)
+//TODO: working with indexes disallow usage of algorithms,
+//it will be faster (performance) to manually write loop rather than obtain iterator and use of std::distance to convert to index
+//Am i amble to modify algorithm to work with iterators?? std::vector<std::set<int>> maybe as next approach??
+
+void initPairMatrix(std::vector<std::vector<char>> & pairMatrix, int maxValue)
 {
-	bool oneElementEqual = false;
-	for (const auto & value : lhs)
+	pairMatrix.resize(maxValue);
+	for( auto & array : pairMatrix)
 	{
-		if(std::find(rhs.begin(), rhs.end(), value) != rhs.end())
-		{
-			if( oneElementEqual == false)
-			{
-				oneElementEqual = true;
-			}
-			else
-			{
-				return true;
-			}
-		}
+		array = std::vector<char>(maxValue, false);
 	}
-	return false;
+	for(int index = 0; index < maxValue; index++)
+	{
+		pairMatrix[index][index] = true;
+	}
 }
 
-bool increment(std::vector<int> & data, const int maxValue)
+std::pair<int, int> findNextFalse(std::vector<std::vector<char>> & pairMatrix, int maxValue)
 {
-	for(auto iter = data.rbegin(); iter != data.rend(); iter++)
+	for(int columnIndex = 0; columnIndex < maxValue; columnIndex++)
 	{
-		(*iter)++;
-		std::iota( (iter+1).base(), data.end(), *iter);
-		if(*iter > maxValue || data.back() > maxValue)
+		for(int rowIndex = 0; rowIndex < maxValue; rowIndex++)
 		{
-			continue;
-		}
-		else
-		{
-			return true;
+			if(pairMatrix[columnIndex][rowIndex] == false)
+			{
+				return {columnIndex, rowIndex};
+			}
 		}
 	}
-	return false;
+
+	//TODO error handling?? should not reach this point
+	//light error for debug
+	assert(false);
+	return {0,0};
+}
+
+std::vector<std::vector<int>> arrays(int p)
+{
+	const int inputNumber = p;
+	const int sizeOfArray = inputNumber + 1;
+	const size_t sizeOfSolution = inputNumber * inputNumber + inputNumber + 1;
+	const int maxValue = sizeOfSolution;
+
+	std::vector<std::vector<int>> solution;
+	solution.reserve(sizeOfSolution);
+	
+	std::vector<std::vector<char>> pairMatrix;
+	initPairMatrix(pairMatrix, maxValue);
+	
+	while(solution.size() != sizeOfSolution)
+	{
+		auto [ column, row ] = findNextFalse(pairMatrix, maxValue);
+
+		//TODO to delete
+		std::ignore = column;
+		std::ignore = row;
+		solution.resize(sizeOfSolution);
+	}
+
+	//TODO to delete
+	std::ignore = sizeOfArray;
+
+	return solution;
 }

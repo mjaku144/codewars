@@ -22,6 +22,7 @@ include_directories(
 
 add_executable( test_
 	solution/solution.cpp
+  solution/debugPrinting.cpp
 	ut/test.cpp
 )
 

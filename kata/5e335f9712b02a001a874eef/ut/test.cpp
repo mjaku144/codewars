@@ -1,88 +1,84 @@
-#include <vector>
+#include <algorithm>
 
 #include <gtest/gtest.h>
 
+#include "debugPrinting.hpp"
 #include "solution.hpp"
 
-TEST(isEqual, ReturnTrueIfSameVectorPassed)
+TEST(initPairMatrix, IsSizeOfMaxValue)
 {
-	std::vector<int> sut1 = {1, 2, 3, 56, 23};
-	std::vector<int> sut2 = sut1;
-	EXPECT_TRUE(isEqual(sut1, sut2));
+	int testSize = 8;
+	std::vector<std::vector<char>> sut;
+	initPairMatrix(sut, testSize);
+	EXPECT_EQ(sut.size(), testSize );
 }
 
-TEST(isEqual, ReturnTrueIf2ElementsInVectorsSame)
+TEST(initPairMatrix, SubArraysAreSizeOfMaxValue)
 {
-	std::vector<int> sut1 = {1, 2, 3, 4, 6};
-	std::vector<int> sut2 = {4, 6, 34, 12, 3};
-	EXPECT_TRUE(isEqual(sut1, sut2));
-}
-
-TEST(isEqual, ReturnFalseIf1ElementsInVectorsSame)
-{
-	std::vector<int> sut1 = {1, 2, 3};
-	std::vector<int> sut2 = {3, 4, 5};
-	EXPECT_FALSE(isEqual(sut1, sut2));
-}
-
-TEST(isEqual, ReturnFalseIfVectorsElementsAreAllDiffernt)
-{
-	std::vector<int> sut1 = {1, 2, 3};
-	std::vector<int> sut2 = {6, 4, 5};
-	EXPECT_FALSE(isEqual(sut1, sut2));
-}
-
-TEST(increment, ReturnTrueIsSuccesfull)
-{
-	std::vector<int> sut1 = {1, 2, 3};
-	std::vector<int> sut2 = sut1;
-	EXPECT_TRUE(increment(sut2, 10));
-}
-
-TEST(increment, ModifyDataToBeNotEqualToPreviousValue)
-{
-	std::vector<int> sut1 = {1, 2, 3};
-	std::vector<int> sut2 = sut1;
-	increment(sut2, 10);
-	EXPECT_FALSE(sut1 == sut2);
-}
-
-TEST(increment, ReturnFalseIfCannotIncrement)
-{
-	std::vector<int> sut1 = {1, 2, 3};
-	std::vector<int> sut2 = sut1;
-	EXPECT_FALSE(increment(sut2, 3));
-}
-
-TEST(increment, CanInterateThroughAllPossibleValues)
-{
-	std::vector<int> data = {1,2,3};
-	int maxValue = 4;
-	std::vector<std::vector<int>> iterationValues = {{1,2,4}, {1,3,4}, {2,3,4}};
-
-	for( auto& nextIteration : iterationValues)
+	int testSize = 10;
+	std::vector<std::vector<char>> sut;
+	initPairMatrix(sut, testSize);
+	for(auto & array : sut)
 	{
-		increment(data, maxValue);
-		EXPECT_EQ(data, nextIteration);
+		EXPECT_EQ(array.size(), testSize);
 	}
-	EXPECT_FALSE(increment(data, maxValue));
 }
 
-void printVector(const std::vector<int>& data)
+TEST(initPairMatrix, FilledWithFalsesAndTruesOnSameValueOfRowAndColumn)
 {
-	for(auto & value : data)
+	int testSize = 9;
+	std::vector<std::vector<char>> sut;
+	initPairMatrix(sut, testSize);
+	for(int columnIndex = 0; columnIndex < testSize; columnIndex++)
 	{
-		std::cout << value << '\t';
+		for(int rowIndex = 0; rowIndex < testSize; rowIndex++)
+		{
+			if(rowIndex == columnIndex)
+			{
+				EXPECT_TRUE(sut[columnIndex][rowIndex]);
+			}
+			else
+			{
+				EXPECT_FALSE(sut[columnIndex][rowIndex]);
+			}
+		}
 	}
-	std::cout << '\n';
 }
 
-TEST(test, test)
+TEST(findNextFalse, ReturningCoordinatesToAnyFalse)
 {
-	std::vector<int> data = {1,2,3};
-	printVector(data);
-	while(increment(data, 7) == true)
+	int testSize = 15;
+	std::vector<std::vector<char>> sut;
+	initPairMatrix(sut, testSize);
+	for(int columnIndex = 0; columnIndex < testSize; columnIndex++)
 	{
-		printVector(data);
+		for(int rowIndex = 0; rowIndex < testSize; rowIndex++)
+		{
+			if((columnIndex * rowIndex + 1) % 3 != 0)
+			{
+				sut[columnIndex][rowIndex] = true;
+				sut[rowIndex][columnIndex] = true;
+			}
+		}
 	}
+	auto [column, row] = findNextFalse(sut, testSize);
+	EXPECT_FALSE(sut[column][row]);
+}
+
+TEST(findNextFalse, ReturningCoordinatesToTheOnlyFalse)
+{
+	int testSize = 17;
+	std::vector<std::vector<char>> sut;
+	initPairMatrix(sut, testSize);
+	for(auto & column : sut)
+	{
+		std::fill(column.begin(), column.end(), true);
+	}
+	int columnWithFalse = 4;
+	int rowWithFalse = 7;
+	sut[columnWithFalse][rowWithFalse] = false;
+
+	auto [column, row] = findNextFalse(sut, testSize);
+	EXPECT_EQ(column, columnWithFalse);
+	EXPECT_EQ(row, rowWithFalse);
 }
