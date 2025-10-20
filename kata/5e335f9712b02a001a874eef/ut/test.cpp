@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 
 #include <gtest/gtest.h>
 
@@ -188,6 +189,52 @@ TEST(markIndexesInMatrix, WillNotModifyIndexesOutOfPassedList)
 	}
 }
 
+TEST(incrementSolutionRow, WillIncrementLastValueIfForMatrixAtSolutionRowAtOneIsFalse)
+{
+	int testSize = 12;
+	std::vector<std::vector<char>> matrix;
+	initPairMatrix(matrix, testSize);
+	int firstFalseIndex = 7;
+	for(int index = 0; index < firstFalseIndex; index++)
+	{
+		matrix[0][index] = true;
+	}
+	std::vector<int> row = {0, 1, 2, firstFalseIndex};
+	incrementSolutionRow(row, matrix, testSize);
+	EXPECT_EQ(row.back(), firstFalseIndex + 1);
+}
+
+TEST(incrementSolutionRow, WillIncrementLastValueIfForMatrixAtSolutionRowAtOneIsTrueAndAtOnePlusOneIsFalse)
+{
+	int testSize = 12;
+	std::vector<std::vector<char>> matrix;
+	initPairMatrix(matrix, testSize);
+	int firstFalseIndex = 7;
+	for(int index = 0; index < firstFalseIndex; index++)
+	{
+		matrix[1][index] = true;
+	}
+	matrix[1][firstFalseIndex + 1] = true;
+	std::vector<int> row = {1, 3, 5, firstFalseIndex};
+	incrementSolutionRow(row, matrix, testSize);
+	EXPECT_EQ(row.back(), firstFalseIndex + 2);	
+}
+
+TEST(incrementSolutionRow, WillDeleteLastValueAndIncrementPreviousOneIfValuesInMatrixAllAreTrueForBiggerNumbers)
+{
+	int testSize = 12;
+	std::vector<std::vector<char>> matrix;
+	initPairMatrix(matrix, testSize);
+	int falseIndex = 7;
+	std::fill(matrix[1].begin(), matrix[1].end(), true);
+	matrix[1][falseIndex] = false;
+	std::vector<int> row = {1, 3, 5, falseIndex};
+	int rowSize = row.size();
+	incrementSolutionRow(row, matrix, testSize);
+	EXPECT_EQ(row.size(), rowSize - 1);
+	EXPECT_EQ(row.back(), falseIndex);	
+}
+
 TEST(arrays, SizeOfResultAccordinglyToRequirements)
 {
 	constexpr int testNumber = 2;
@@ -245,3 +292,18 @@ TEST(arrays, ResultsArraysHaveMaxOneElementInCommonWithRestOfThem)
 		}
 	}
 }
+
+TEST(arrays, LastTest)
+{
+	std::vector<int> primeNumbers = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43}; 
+
+	for(auto number : primeNumbers)
+	{
+		auto start = std::chrono::system_clock::now();
+		auto result = arrays(number);
+		auto end = std::chrono::system_clock::now();
+		std::chrono::duration<double> elapsed_seconds = end-start;
+		std::cout << number << '\t' << elapsed_seconds.count() << std::endl;
+	}
+}
+

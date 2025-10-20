@@ -15,6 +15,8 @@ void transformFromIndexDomainToNumberDomain(std::vector<int> & data);
 
 void markIndexesInMatrix(std::vector<std::vector<char>> & matrix, const std::vector<int> & numbers);
 
+void incrementSolutionRow(std::vector<int> & solutionRow, std::vector<std::vector<char>> & pairMatrix, int maxValue);
+
 //definition from codewars
 std::vector<std::vector<int>> arrays(int p);
 
