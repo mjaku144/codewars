@@ -1,12 +1,13 @@
 #include <vector>
 #include <utility>
 #include <cassert>
+#include <algorithm>
 
 #include "solution.hpp"
 
 //TODO: working with indexes disallow usage of algorithms,
 //it will be faster (performance) to manually write loop rather than obtain iterator and use of std::distance to convert to index
-//Am i amble to modify algorithm to work with iterators?? std::vector<std::set<int>> maybe as next approach??
+//Am i able to modify algorithm to work with iterators?? std::vector<std::set<int>> maybe as next approach??
 
 void initPairMatrix(std::vector<std::vector<char>> & pairMatrix, int maxValue)
 {
@@ -40,6 +41,58 @@ std::pair<int, int> findNextFalse(std::vector<std::vector<char>> & pairMatrix, i
 	return {0,0};
 }
 
+std::pair<bool, int> findNextValueForSolution(std::vector<int> & solutionRow, std::vector<std::vector<char>> & pairMatrix, int maxValue)
+{
+	for(int index = 0; index < maxValue; index++)
+	{
+		bool sum = false;
+		for(auto value : solutionRow)
+		{
+			sum |= pairMatrix[value][index];
+		}
+		if(sum == false)
+		{
+			return {true, index};
+		}
+	}
+	return {false, 0};
+}
+
+//TODO testing of this function
+void fillSolutionRowForInitCoordinates(std::vector<int> & solutionRow, std::vector<std::vector<char>> & initPairMatrix, int maxValue, unsigned int solutionRowSize)
+{
+	while(solutionRow.size() != solutionRowSize)
+	{
+		auto [result, value] = findNextValueForSolution(solutionRow, initPairMatrix, maxValue);
+		if(result == true)
+		{
+			solutionRow.push_back(value);
+		}
+
+		//TODO to delete, should work for 2 -> kind of recursion needed here
+		break;
+	}
+	//TODO
+}
+
+void transformFromIndexDomainToNumberDomain(std::vector<int> & data)
+{
+	std::for_each(data.begin(), data.end(), [](auto & x){x++;});
+}
+
+void markIndexesInMatrix(std::vector<std::vector<char>> & matrix, const std::vector<int> & indexes)
+{
+	for(auto iter1 = indexes.begin(); iter1 != indexes.end(); iter1++)
+	{
+		for(auto iter2 = iter1 + 1; iter2 != indexes.end(); iter2++)
+		{
+			matrix[*iter1][*iter2] = true;
+			matrix[*iter2][*iter1] = true;
+		}
+	}
+}
+
+//TODO add testing
 std::vector<std::vector<int>> arrays(int p)
 {
 	const int inputNumber = p;
@@ -55,16 +108,18 @@ std::vector<std::vector<int>> arrays(int p)
 	
 	while(solution.size() != sizeOfSolution)
 	{
+		std::vector<int> solutionRow;
+		solutionRow.reserve(sizeOfArray);
 		auto [ column, row ] = findNextFalse(pairMatrix, maxValue);
+		solutionRow.push_back(column);
+		solutionRow.push_back(row);
 
-		//TODO to delete
-		std::ignore = column;
-		std::ignore = row;
-		solution.resize(sizeOfSolution);
+		fillSolutionRowForInitCoordinates(solutionRow, pairMatrix, maxValue, sizeOfArray);
+		markIndexesInMatrix(pairMatrix, solutionRow);
+
+		transformFromIndexDomainToNumberDomain(solutionRow);
+		solution.push_back(solutionRow);
 	}
-
-	//TODO to delete
-	std::ignore = sizeOfArray;
 
 	return solution;
 }
